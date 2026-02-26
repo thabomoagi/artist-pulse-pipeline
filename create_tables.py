@@ -7,15 +7,18 @@ load_dotenv()
 
 def create_tables():
     commands = (
+        "DROP TABLE IF EXISTS artists CASCADE;",
         """
-        CREATE TABLE IF NOT EXISTS artists (
+        CREATE TABLE artists (
             artist_id SERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             genre VARCHAR(100),
+            country VARCHAR(10),
+            mb_id VARCHAR(50),
             followers_count INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-        """,
+        """
     )
 
     try:
@@ -26,16 +29,10 @@ def create_tables():
             password=os.getenv("DB_PASS")
         )
         cur = conn.cursor()
-
-        # Execute the command
         for command in commands:
             cur.execute(command)
-
-        # Commit (save) the changes
         conn.commit()
-
-        print("✅ Table 'artists' created successfully!")
-
+        print("✅ Table 'artists' refreshed with Country and MusicBrainz ID columns!")
         cur.close()
         conn.close()
     except Exception as e:
